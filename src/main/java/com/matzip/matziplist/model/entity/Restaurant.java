@@ -41,6 +41,7 @@ public class Restaurant {
         return RestaurantApiResponse.builder()
                 .id(id)
                 .name(name)
+                .imgUrl(imgUrl)
                 .phoneNumber(phoneNumber)
                 .address(address)
                 .lat(lat)

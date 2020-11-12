@@ -45,9 +45,7 @@ public class RestaurantService {
 
             if(!request.getMenuItems().isEmpty()) {
                 request.getMenuItems()
-                        .forEach(menuItemApiRequest -> {
-                            menuItemRepository.save(menuItemApiRequest.toEntity(saved));
-                        });
+                        .forEach(menuItemApiRequest -> menuItemRepository.save(menuItemApiRequest.toEntity(saved)));
             }
 
         });
