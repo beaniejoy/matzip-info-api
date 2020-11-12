@@ -18,6 +18,8 @@ public class RestaurantApiResponse {
 
     private String name;
 
+    private String imgUrl;
+
     private String phoneNumber;
 
     private String address;

@@ -21,6 +21,8 @@ public class Restaurant {
 
     private String name;
 
+    private String imgUrl;
+
     private String phoneNumber;
 
     private String address;
@@ -34,7 +36,7 @@ public class Restaurant {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     private List<MenuItem> menuItemList;
 
-    // Restaurant List로 보내줄 때
+    // Restaurant List로 보내줄 때 (보류)
     public RestaurantApiResponse toResponseForList() {
         return RestaurantApiResponse.builder()
                 .id(id)
@@ -52,6 +54,7 @@ public class Restaurant {
         return RestaurantApiResponse.builder()
                 .id(id)
                 .name(name)
+                .imgUrl(imgUrl)
                 .phoneNumber(phoneNumber)
                 .address(address)
                 .lat(lat)

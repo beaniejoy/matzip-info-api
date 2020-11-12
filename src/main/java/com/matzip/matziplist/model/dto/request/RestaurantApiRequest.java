@@ -17,6 +17,8 @@ public class RestaurantApiRequest {
 
     private String name;
 
+    private String imgUrl;
+
     private String phoneNumber;
 
     private String address;
@@ -33,6 +35,7 @@ public class RestaurantApiRequest {
 
         return Restaurant.builder()
                 .name(name)
+                .imgUrl(imgUrl)
                 .phoneNumber(phoneNumber)
                 .address(address)
                 .lat(lat)

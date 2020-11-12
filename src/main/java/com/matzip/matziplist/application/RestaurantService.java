@@ -24,7 +24,7 @@ public class RestaurantService {
     public List<RestaurantApiResponse> getRestaurantList() {
 
         return restaurantRepository.findAll().stream()
-                .map(Restaurant::toResponseForList)
+                .map(Restaurant::toResponse)
                 .collect(Collectors.toList());
 
     }

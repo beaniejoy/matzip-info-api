@@ -54,6 +54,10 @@ def crawl_detail_html(detail_url_):
     detail_html = requests.get(detail_url_)
     detail_soup = BeautifulSoup(detail_html.text, "html.parser")
 
+    # 이미지 추출
+    res_img_tag = detail_soup.find(attrs={'class': 'store-pic'}).find('li', attrs={'class': 'bimg'}).find('img')
+    res_img_url = res_img_tag['src']
+
     res_name = detail_soup.find(attrs={'class': 'tit-point'}).text
     res_name = res_name.strip('\n')
     print('detail crawling... about ' + res_name)
@@ -92,6 +96,7 @@ def crawl_detail_html(detail_url_):
 
     # 단일 음식점에 대한 json 데이터 생성
     _single_data = {'name': res_name,
+                    'imgUrl': res_img_url,
                     'phoneNumber': res_phone,
                     'address': res_address,
                     'lat': x,
@@ -132,6 +137,7 @@ def crawling():
     return res_data
 
 
+# json 파일로 생성
 def make_json(src, result_):
     if not os.path.isdir(src):
         os.mkdir(src)
