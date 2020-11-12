@@ -2,20 +2,18 @@ package com.matzip.matziplist.interfaces;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matzip.matziplist.application.RestaurantService;
 import com.matzip.matziplist.model.dto.request.RestaurantApiRequest;
 import com.matzip.matziplist.model.dto.response.RestaurantApiResponse;
-import com.matzip.matziplist.application.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class RestaurantController {
