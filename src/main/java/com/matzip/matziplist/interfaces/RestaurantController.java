@@ -41,7 +41,7 @@ public class RestaurantController {
         ObjectMapper objectMapper = new ObjectMapper();
 
 //        String path = "./json"; // dev path
-        String path = "/home/ec2-user/app/matziplist/json"; // AWS ec2 path
+        String path = "/home/ec2-user/app/matziplist"; // AWS ec2 path
         String file = "/matzip.json";
 
         List<RestaurantApiRequest> requestList = objectMapper.readValue(new File(path + file),
