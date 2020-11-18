@@ -1,6 +1,6 @@
 package com.matzip.matziplist.model.entity;
 
-import com.matzip.matziplist.model.dto.response.MenuItemApiResponse;
+import com.matzip.matziplist.model.dto.response.TagApiResponse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @ToString(exclude = {"restaurant"})
 @Entity
-public class MenuItem {
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,16 +19,13 @@ public class MenuItem {
 
     private String name;
 
-    private String price;
-
     @ManyToOne
     private Restaurant restaurant;
 
-    public MenuItemApiResponse toResponse() {
-        return MenuItemApiResponse.builder()
+    public TagApiResponse toResponse() {
+        return TagApiResponse.builder()
                 .id(id)
                 .name(name)
-                .price(price)
                 .build();
     }
 }
