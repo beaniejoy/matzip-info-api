@@ -1,5 +1,6 @@
 import os
 import json
+import re
 import requests
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -15,7 +16,8 @@ def crawl_total_html(target_url_, driver_path_):
     driver = webdriver.Chrome(driver_path_)
     driver.get(target_url_)
 
-    while True:
+    for _ in range(0, 1):
+        # while True:
         try:
             more_btn = WebDriverWait(driver, 1).until(
                 EC.element_to_be_clickable((By.XPATH, '//span[@class="more-btn"]'))
@@ -28,6 +30,10 @@ def crawl_total_html(target_url_, driver_path_):
             driver.quit()
 
             break
+
+    print("All Done")
+    _html = driver.page_source
+    driver.quit()
 
     return _html
 
@@ -74,24 +80,77 @@ def crawl_detail_html(detail_url_):
         else:
             res_description += (', ' + desc)
 
-    # 메뉴정보
-    menu_list = []
+    # 태그정보(list)
+    tag_list = []
+    res_tag_element = detail_soup.find(attrs={'class': 'tag'})
+    if res_tag_element is not None:
+        res_tag_list = res_tag_element.find_all('span')
 
+        for tag_element in res_tag_list:
+            tag_name = tag_element.text.strip()
+
+            tag = {'name': tag_name}
+
+            tag_list.append(tag)
+
+    # 영업시간(list)
+    oper_time_list = []
+    res_oper_time_element = detail_soup.find(attrs={'class': 'busi-hours'})
+    if res_oper_time_element is not None:
+        res_oper_time_list = res_oper_time_element.find_all('li')
+
+        for oper_time_element in res_oper_time_list:
+            day = oper_time_element.find(attrs={'class': 'l-txt'}).text.strip()
+
+            # p tag 내부 span태그 제거를 위한 작업
+            p_tag = oper_time_element.find(attrs={'class': 'r-txt'})
+            span_tag = oper_time_element.find(attrs={'class': 'r-txt'}).find('span')
+
+            if span_tag is not None:
+                span_tag.decompose()
+
+            time = p_tag.text.strip()
+
+            oper_time = {'day': day,
+                         'time': time}
+
+            oper_time_list.append(oper_time)
+
+    # 메뉴정보(list)
+    menu_list = []
     # 메뉴가 존재하지 않는 경우 존재
     res_menu_element = detail_soup.find(attrs={'class': 'Restaurant_MenuList'})
     if res_menu_element is not None:
         res_menu_list = res_menu_element.find_all('li')
 
         for menu_element in res_menu_list:
-            menu_name = menu_element.find(attrs={'class': 'Restaurant_Menu'}).text
-            menu_price = menu_element.find(attrs={'class': 'Restaurant_MenuPrice'}).text
+            menu_name = menu_element.find(attrs={'class': 'Restaurant_Menu'}).text.strip()
+            menu_price = menu_element.find(attrs={'class': 'Restaurant_MenuPrice'}).text.strip()
 
             menu = {'name': menu_name,
                     'price': menu_price}
 
             menu_list.append(menu)
 
-    # 위도, 경도로 주소 변환
+    # 음식점 등급(종합, 맛, 가격, 서비스, 평가인원수)
+    res_grade_element = detail_soup.find(attrs={'class': 'appraisal'})
+    if res_grade_element is not None:
+        number_str = res_grade_element.find(attrs={'class': 'tit'}).text.strip()
+        number = int(re.findall('\d+', number_str)[0])
+        total = float(res_grade_element.find(attrs={'class': 'point'}).text.strip()[:-1])
+
+        point_detail_list = res_grade_element.find(attrs={'class': 'point-detail'})
+        point_taste = float(point_detail_list.find_all('span')[0].find(attrs={'class': 'star'}).text.strip())
+        point_price = float(point_detail_list.find_all('span')[1].find(attrs={'class': 'star'}).text.strip())
+        point_service = float(point_detail_list.find_all('span')[2].find(attrs={'class': 'star'}).text.strip())
+
+        grade = {'total': total,
+                 'taste': point_taste,
+                 'price': point_price,
+                 'service': point_service,
+                 'number': number}
+
+    # 위도, 경도로 주소 변환 (kakao api 사용)
     x, y = change_address_kakao_api(res_address)
 
     # 단일 음식점에 대한 json 데이터 생성
@@ -99,10 +158,13 @@ def crawl_detail_html(detail_url_):
                     'imgUrl': res_img_url,
                     'phoneNumber': res_phone,
                     'address': res_address,
+                    'operTime': oper_time_list,
                     'lat': x,
                     'lng': y,
                     'menuItems': menu_list,
-                    'description': res_description}
+                    'description': res_description,
+                    'tag': tag_list,
+                    'grade': grade}
 
     return _single_data
 
@@ -114,6 +176,7 @@ def crawling():
 
     # webdriver 실행파일 있는 파일위치
     driver_path = "C:\dev\python_crawling\chromedriver.exe"
+    # driver_path = "/home/ec2-user/app/matzip/chromedriver.exe"
 
     # 해당구역 내 전체 음식점 리스트 정보 추출
     html = crawl_total_html(domain_url + target_url, driver_path)
