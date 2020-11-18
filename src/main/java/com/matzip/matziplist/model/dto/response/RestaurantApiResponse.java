@@ -32,4 +32,13 @@ public class RestaurantApiResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<MenuItemApiResponse> menu;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<TagApiResponse> tag;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<OperTimeApiResponse> operTime;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private GradeApiResponse grade;
 }

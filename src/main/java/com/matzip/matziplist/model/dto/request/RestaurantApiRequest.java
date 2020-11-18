@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -30,6 +29,12 @@ public class RestaurantApiRequest {
     private String description;
 
     private List<MenuItemApiRequest> menuItems;
+
+    private List<TagApiRequest> tag;
+
+    private List<OperTimeApiRequest> operTime;
+
+    private GradeApiRequest grade;
 
     public Restaurant toEntity() {
 

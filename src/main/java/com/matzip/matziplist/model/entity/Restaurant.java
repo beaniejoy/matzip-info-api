@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"menuItemList"})
+@ToString(exclude = {"menuItemList", "tagList", "operTimeList", "grade"})
 @Entity
 public class Restaurant {
 
@@ -36,6 +36,15 @@ public class Restaurant {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     private List<MenuItem> menuItemList;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    private List<Tag> tagList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    private List<OperTime> operTimeList;
+
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "restaurant")
+    private Grade grade;
+
     // Restaurant List로 보내줄 때 (보류)
     public RestaurantApiResponse toResponseForList() {
         return RestaurantApiResponse.builder()
@@ -47,10 +56,13 @@ public class Restaurant {
                 .lat(lat)
                 .lng(lng)
                 .description(description)
+                .menu(menuItemList.stream()
+                        .map(MenuItem::toResponse)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
-    // 단일 Restaurant을 보내줄 때
+    // 단일 Restaurant을 보내줄 때 (상세 페이지)
     public RestaurantApiResponse toResponse() {
         return RestaurantApiResponse.builder()
                 .id(id)
@@ -64,6 +76,13 @@ public class Restaurant {
                 .menu(menuItemList.stream()
                         .map(MenuItem::toResponse)
                         .collect(Collectors.toList()))
+                .tag(tagList.stream()
+                        .map(Tag::toResponse)
+                        .collect(Collectors.toList()))
+                .operTime(operTimeList.stream()
+                        .map(OperTime::toResponse)
+                        .collect(Collectors.toList()))
+                .grade(grade.toResponse())
                 .build();
     }
 }
